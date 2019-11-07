@@ -28,6 +28,12 @@ def as_bool(default):
         default,
     )
 
+def as_list(default):
+    return compose(
+        lambda x: [i.strip() for i in x.split(';')],
+        default,
+    )
+
 def as_dict(default):
     return compose(
         lambda x: {
@@ -60,13 +66,13 @@ secrets = {
         ('TASKCLUSTER_ACCESS_TOKEN', required),
 
         # treestatus_api specific secrets, for more details look at src/treestatus_api/api.py
-        ('PULSE_TREESTATUS_ENABLE', default(False)),
-        ('STATUSPAGE_ENABLE', default(True)),
+        ('PULSE_TREESTATUS_ENABLE', as_bool(default(False))),
+        ('STATUSPAGE_ENABLE', as_bool(default(True))),
         ('STATUSPAGE_TOKEN', required),  # < -authentication token
         ('STATUSPAGE_PAGE_ID', required),  # < -id of the page which we are interacting with
-        ('STATUSPAGE_COMPONENTS', required),  # < -a tree_name= > component_id mapping
-        ('STATUSPAGE_NOTIFY_ON_ERROR', required),  # < -email to where to send when error happens
-        ('STATUSPAGE_TAGS', required),  # < -list of tags which will trigger creation of status page incident
+        ('STATUSPAGE_COMPONENTS', as_dict(required)),  # < -a tree_name= > component_id mapping
+        ('STATUSPAGE_NOTIFY_ON_ERROR', as_dict(required)),  # < -email to where to send when error happens
+        ('STATUSPAGE_TAGS', as_list(required)),  # < -list of tags which will trigger creation of status page incident
 
         # Database connection string, for more details look at src/treestatus_api/lib/db.py
         ('DATABASE_URL', required),
