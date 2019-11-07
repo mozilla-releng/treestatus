@@ -318,7 +318,7 @@ def _notify_status_change(trees_changes):
                 flask.current_app.pulse.publish(exchange, routing_key, payload)
             except Exception as e:
                 import traceback
-                msg = 'Can\'t send notification to pulse.'
+                msg = "Can't send notification to pulse."
                 trace = traceback.format_exc()
                 log.error('{0}\nException:{1}\nTraceback: {2}'.format(msg, e, trace))  # noqa
 

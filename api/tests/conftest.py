@@ -3,6 +3,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import os
+
 import pytest
 
 
@@ -13,6 +15,15 @@ def get_app_config(extra_config):
     }
     config.update(extra_config)
     return config
+
+
+def configure_app(app):
+    '''Configure flask application and ensure all mocks are in place
+    '''
+
+    if hasattr(app, 'db'):
+        app.db.drop_all()
+        app.db.create_all()
 
 
 @pytest.fixture(scope='session')
@@ -31,5 +42,5 @@ def app():
     app = treestatus_api.create_app(config)
 
     with app.app_context():
-        backend_common.testing.configure_app(app)
+        configure_app(app)
         yield app
