@@ -1,0 +1,16 @@
+-r base.in
+
+codecov
+coveralls
+flake8
+flake8-coding
+flake8-copyright
+flake8-debugger
+flake8-isort
+flake8-mypy
+flake8-quotes
+inotify
+pdbpp
+pytest
+pytest-cov
+responses
