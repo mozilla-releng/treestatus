@@ -8,6 +8,7 @@ Logbook
 SQLAlchemy
 Werkzeug
 aioamqp
+blinker
 connexion[swagger-ui]
 flask-oidc
 flask-talisman
