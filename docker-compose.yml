@@ -26,7 +26,7 @@ services:
     volumes:
       - dbstore:/var/lib/postgresql/data
     ports:
-      - "54320:5432"
+      - "8100:5432"
     environment:
       - POSTGRES_USER=treestatususer
       - POSTGRES_PASSWORD=treestatuspassword
