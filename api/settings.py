@@ -46,8 +46,12 @@ def as_dict(default):
 def b64decode(default):
     return compose(base64.b64decode, default)
 
-def default(value):
-    return lambda _: value
+def default(default_value):
+    def _default(variable):
+        if variable in os.environ:
+            return os.environ[variable]
+        return default_value
+    return _default
 
 
 # -- LOAD SECRETS -------------------------------------------------------------
@@ -71,7 +75,7 @@ secrets = {
         ('STATUSPAGE_TOKEN', required),  # < -authentication token
         ('STATUSPAGE_PAGE_ID', required),  # < -id of the page which we are interacting with
         ('STATUSPAGE_COMPONENTS', as_dict(required)),  # < -a tree_name= > component_id mapping
-        ('STATUSPAGE_NOTIFY_ON_ERROR', as_dict(required)),  # < -email to where to send when error happens
+        ('STATUSPAGE_NOTIFY_ON_ERROR', required),  # < -email to where to send when error happens
         ('STATUSPAGE_TAGS', as_list(required)),  # < -list of tags which will trigger creation of status page incident
 
         # Database connection string, for more details look at src/treestatus_api/lib/db.py
