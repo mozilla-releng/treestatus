@@ -76,6 +76,9 @@ def create_app(
         logger.debug('Extension initialized', extension=extension_name, app=app.name)
 
     app.add_url_rule('/', 'root', lambda: flask.redirect('/static/ui/index.html'))
+    app.add_url_rule('/favicon.ico', 'favicon', lambda: flask.redirect('/static/ui/favicon.ico'))
+    app.add_url_rule('/robots.txt', 'robots', lambda: flask.redirect('/static/ui/robots.txt'))
+
 
     if enable_dockerflow:
         app.add_url_rule('/__heartbeat__',

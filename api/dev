@@ -72,7 +72,7 @@ case "$1" in
       $PYENV_DIR/bin/pip install -e ./
     fi
     #exec ./docker.d/run.sh
-    exec ${PYENV_DIR}/bin/flask run --without-threads -h $HOST -p $PORT --cert docker.d/cert.pem --key docker.d/key.pem
+    exec ${PYENV_DIR}/bin/flask run --without-threads -h $HOST -p $PORT --cert docker.d/cert.pem --key docker.d/key.pem --reload
     exit 0
     ;;
   "test")
