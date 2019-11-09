@@ -32,8 +32,8 @@ var init = function() {
     var app = require('./Main.elm').Main.fullscreen({
       auth0: localstorage.load_item(AUTH_KEY),
       treestatusUrl: getData('treestatus-api-url', process.env.TREESTATUS_API_URL),
-      docsUrl: getData('docs-url', process.env.DOCS_URL),
       version: release_version,
+      channel: release_channel,
     });
 
     // Setup ports

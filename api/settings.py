@@ -115,7 +115,7 @@ locals().update(secrets)
 
 APP_URL = 'https://treestatus.mozilla-releng.net'
 if secrets['ENV'] == 'localdev':
-    APP_URL = 'https://127.0.0.1:8000'
+    APP_URL = 'https://127.0.0.1:8002'
 elif secrets['ENV'] == 'dev':
     APP_URL = 'https://dev.treestatus.mozilla-releng.net'
 elif secrets['ENV'] == 'dev':

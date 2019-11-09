@@ -22,6 +22,7 @@ def static_handler(filename):
                                   filename.endswith('.eot') or
                                   filename.endswith('.ttf') or
                                   filename.endswith('.ico') or
+                                  filename.endswith('.html') or
                                   filename.endswith('.txt')
                                   ):
         return flask.Response(index_html(), mimetype='text/html')
@@ -47,7 +48,6 @@ def index_html():
     for attr, attr_value in [
             ('release-version', app.config['VERSION']),
             ('release-channel', app.config['ENV']),
-            ('docs-url', 'https://docs.mozilla-releng.net'),
             ('treestatus-api-url', app.config['APP_URL']),
             ]:
         body_attrs += f'data-{attr}="{attr_value}" '

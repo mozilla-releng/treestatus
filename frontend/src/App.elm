@@ -112,8 +112,8 @@ navigateTo route =
 type alias Flags =
     { auth0 : Maybe TaskclusterLogin.Tokens
     , treestatusUrl : String
-    , docsUrl : String
     , version : String
+    , channel: String
     }
 
 
@@ -131,8 +131,8 @@ type alias Model =
     , tokens : App.Tokens.Model
     , tooltool : App.ToolTool.Model
     , treestatus : App.TreeStatus.Types.Model App.TreeStatus.Form.AddTree App.TreeStatus.Form.UpdateTree App.TreeStatus.Form.UpdateStack App.TreeStatus.Form.UpdateLog
-    , docsUrl : String
     , version : String
+    , channel : String
     }
 
 

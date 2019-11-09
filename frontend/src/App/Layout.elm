@@ -1,6 +1,7 @@
 module App.Layout exposing (..)
 
 import App
+import App.TreeStatus.Types
 import App.Utils
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -32,12 +33,17 @@ viewDropdown title pages =
 viewUser : App.Model -> List (Html App.Msg)
 viewUser model =
     let
+        _ = Debug.log "MODEL" model
         loginParams =
             [ ( "action", "login" )
-            , ( "client_id", "releng-tooltool-localdev" )
-            , ( "return_url", "https://localhost:8010/?works" )
-            , ( "taskcluster_url", "https://hassan.taskcluster-dev.net" )
-            , ( "scope", "project:releng:services/tooltool/*" )
+            , ( "client_id", "releng-treestatus-" ++ model.channel )
+            , ( "return_url", model.history
+                                |> List.head
+                                |> Maybe.map .href
+                                |> Maybe.withDefault ""
+              )
+            , ( "taskcluster_url", "https://firefox-ci-tc.services.mozilla.com")
+            , ( "scope", "project:releng:services/treestatus/*" )
             ]
     in
     case model.user.credentials of
@@ -79,7 +85,7 @@ viewUser model =
 viewNavBar : App.Model -> List (Html App.Msg)
 viewNavBar model =
     [ a
-        [ Utils.onClick (App.NavigateTo App.HomeRoute)
+        [ Utils.onClick (App.NavigateTo (App.TreeStatusRoute App.TreeStatus.Types.ShowTreesRoute))
         , href "#"
         , class "navbar-brand"
         ]
@@ -95,10 +101,6 @@ viewFooter model =
     [ hr [] []
     , ul []
         [ li []
-            [ a [ href model.docsUrl ]
-                [ text "Documentation" ]
-            ]
-        , li []
             [ a [ href "https://github.com/mozilla/release-services/blob/master/CONTRIBUTING.rst" ]
                 [ text "Contribute" ]
             ]
