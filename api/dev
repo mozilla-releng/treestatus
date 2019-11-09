@@ -8,7 +8,7 @@ export ENV=${ENV:="localdev"}
 export PROJECT_NAME=${PROJECT_NAME:="treestatus_api"}
 export FLASK_APP=${FLASK_APP:="treestatus_api.flask:app"}
 export APP_SETTINGS=${APP_SETTINGS:=`realpath ./settings.py`}
-export HOST=${HOST:="127.0.0.1"}
+export HOST=${HOST:="localhost"}
 export PORT=${PORT:="8002"}
 export DATABASE_URL=${DATABASE_URL:="postgres://treestatususer:treestatuspassword@localhost:8102/treestatusdb"}
 #export TASKCLUSTER_ROOT_URL=${TASKCLUSTER_ROOT_URL:="https://stage.taskcluster.nonprod.cloudops.mozgcp.net"}

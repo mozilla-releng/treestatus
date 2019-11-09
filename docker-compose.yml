@@ -11,7 +11,7 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=8002
-      - APP_URL=https://127.0.0.1:8002
+      - APP_URL=https://localhost:8002
       - APP_SETTINGS=/app/settings.py
       - ENV=localdev
       - DATABASE_URL=postgres://treestatususer:treestatuspassword@db/treestatusdb
