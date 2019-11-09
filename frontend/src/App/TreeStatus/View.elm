@@ -32,7 +32,7 @@ shortUsername username =
 
 hasScope : String -> List String -> Bool
 hasScope scope scopes =
-    App.UserScopes.hasScope scopes ("project:releng:treestatus/" ++ scope)
+    App.UserScopes.hasScope scopes ("project:releng:services/treestatus/" ++ scope)
 
 
 onClickGoTo : App.TreeStatus.Types.Route -> Attribute App.TreeStatus.Types.Msg
