@@ -79,7 +79,6 @@ def create_app(
     app.add_url_rule('/favicon.ico', 'favicon', lambda: flask.redirect('/static/ui/favicon.ico'))
     app.add_url_rule('/robots.txt', 'robots', lambda: flask.redirect('/static/ui/robots.txt'))
 
-
     if enable_dockerflow:
         app.add_url_rule('/__heartbeat__',
                          view_func=treestatus_api.lib.dockerflow.heartbeat_response)

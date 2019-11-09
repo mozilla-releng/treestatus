@@ -7,10 +7,10 @@ import os
 
 import taskcluster
 
-import treestatus_api.view
 import treestatus_api.config
 import treestatus_api.lib.flask
 import treestatus_api.models  # noqa
+import treestatus_api.view
 
 
 def create_app(config=None):
