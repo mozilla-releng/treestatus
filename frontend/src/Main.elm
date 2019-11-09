@@ -3,8 +3,6 @@ module Main exposing (..)
 import App
 import App.Home
 import App.Layout
-import App.Tokens
-import App.ToolTool
 import App.TreeStatus
 import App.TreeStatus.Api
 import App.TreeStatus.Types
@@ -13,7 +11,8 @@ import Hawk
 import Html exposing (..)
 import Navigation
 import String
-import TaskclusterLogin
+import Task
+import Time exposing (Time)
 import Utils
 
 
@@ -30,23 +29,17 @@ main =
 init : App.Flags -> Navigation.Location -> ( App.Model, Cmd App.Msg )
 init flags location =
     let
-        _ = Debug.log "LOCATION" location
         route =
             App.parseLocation location
-            |> Debug.log "ROUTE"
-
-        ( user, userCmd ) =
-            TaskclusterLogin.init flags.treestatusUrl flags.auth0
 
         model =
             { history = [ location ]
             , route = route
             , version = flags.version
             , channel = flags.channel
-            , user = user
-            , userScopes = App.UserScopes.init
-            , tokens = App.Tokens.init
-            , tooltool = App.ToolTool.init
+            , taskclusterRootUrl = flags.taskclusterRootUrl
+            , taskclusterScopes = App.UserScopes.init flags.taskclusterRootUrl
+            , taskclusterCredentials = flags.taskclusterCredentials
             , treestatus = App.TreeStatus.init flags.treestatusUrl
             }
 
@@ -56,7 +49,7 @@ init flags location =
     ( model_
     , Cmd.batch
         [ appCmd
-        , Cmd.map App.TaskclusterLoginMsg userCmd
+        , Task.perform App.CheckTaskclusterCredentials Time.now
         ]
     )
 
@@ -69,45 +62,12 @@ initRoute model route =
 
         App.HomeRoute ->
             { model
-                | tokens = App.Tokens.init
-                , tooltool = App.ToolTool.init
-                , treestatus =
+                | treestatus =
                     App.TreeStatus.init model.treestatus.baseUrl
             }
-            ! [ Utils.performMsg (App.UserScopesMsg App.UserScopes.FetchScopes)
-              , App.navigateTo (App.TreeStatusRoute App.TreeStatus.Types.ShowTreesRoute)
-              ]
-
-        App.LoginRoute code state ->
-            let
-                loginCmd =
-                    case TaskclusterLogin.convertUrlParametersToCode code state of
-                        Just code_ ->
-                            TaskclusterLogin.Logging code_
-                                |> App.TaskclusterLoginMsg
-                                |> Utils.performMsg
-
-                        Nothing ->
-                            Cmd.none
-            in
-            model
-                ! [ loginCmd
-                  , App.navigateTo App.HomeRoute
+                ! [ Utils.performMsg (App.UserScopesMsg App.UserScopes.FetchScopes)
+                  , App.navigateTo (App.TreeStatusRoute App.TreeStatus.Types.ShowTreesRoute)
                   ]
-
-        App.LogoutRoute ->
-            model
-                ! [ Utils.performMsg (App.TaskclusterLoginMsg TaskclusterLogin.Logout)
-
-                  -- TODO: we should be redirecting to the url that we were loging in from
-                  , Utils.performMsg (App.NavigateTo App.HomeRoute)
-                  ]
-
-        App.TokensRoute ->
-            model ! []
-
-        App.ToolToolRoute ->
-            model ! []
 
         App.TreeStatusRoute route ->
             model
@@ -141,27 +101,8 @@ update msg model =
                 ]
             )
 
-        --
-        -- LOGIN / LOGOUT
-        --
-        App.TaskclusterLoginMsg userMsg ->
-            let
-                ( newUser, userCmd ) =
-                    TaskclusterLogin.update userMsg model.user
-
-                fetchScopes =
-                    case userMsg of
-                        TaskclusterLogin.LoadedTaskclusterCredentials response ->
-                            [ Utils.performMsg (App.UserScopesMsg App.UserScopes.FetchScopes) ]
-
-                        _ ->
-                            []
-            in
-            ( { model | user = newUser }
-            , [ Cmd.map App.TaskclusterLoginMsg userCmd ]
-                |> List.append fetchScopes
-                |> Cmd.batch
-            )
+        App.NavigateToUrl url ->
+            ( model, Navigation.newUrl url )
 
         --
         -- HAWK REQUESTS
@@ -200,32 +141,14 @@ update msg model =
         App.UserScopesMsg msg_ ->
             let
                 ( newModel, newCmd, hawkCmd ) =
-                    App.UserScopes.update msg_ model.userScopes
+                    App.UserScopes.update msg_ model.taskclusterScopes
             in
-            ( { model | userScopes = newModel }
+            ( { model | taskclusterScopes = newModel }
             , hawkCmd
-                |> Maybe.map (\req -> [ hawkSend model.user "UserScopes" req ])
+                |> Maybe.map (\req -> [ hawkSend model.taskclusterCredentials "UserScopes" req ])
                 |> Maybe.withDefault []
                 |> List.append [ Cmd.map App.UserScopesMsg newCmd ]
                 |> Cmd.batch
-            )
-
-        App.TokensMsg msg_ ->
-            let
-                ( newModel, newCmd ) =
-                    App.Tokens.update msg_ model.tokens
-            in
-            ( { model | tokens = newModel }
-            , Cmd.map App.TokensMsg newCmd
-            )
-
-        App.ToolToolMsg msg_ ->
-            let
-                ( newModel, newCmd ) =
-                    App.ToolTool.update msg_ model.tooltool
-            in
-            ( { model | tooltool = newModel }
-            , Cmd.map App.ToolToolMsg newCmd
             )
 
         App.TreeStatusMsg msg_ ->
@@ -243,24 +166,37 @@ update msg model =
             in
             ( { model | treestatus = newModel }
             , hawkCmd
-                |> Maybe.map (\req -> [ hawkSend model.user "TreeStatus" req ])
+                |> Maybe.map (\req -> [ hawkSend model.taskclusterCredentials "TreeStatus" req ])
                 |> Maybe.withDefault []
                 |> List.append [ Cmd.map App.TreeStatusMsg newCmd ]
                 |> Cmd.batch
             )
 
+        App.CheckTaskclusterCredentials time ->
+            let
+                expires =
+                    model.taskclusterCredentials
+                        |> Maybe.map .expires
+                        |> Maybe.withDefault 0
+            in
+            if time > toFloat expires then
+                -- XXX: create a port to only request new taskcluster credentials
+                model ! [ Utils.performMsg (App.NavigateToUrl <| App.loginUrl model) ]
+            else
+                model ! []
+
 
 hawkSend :
-    TaskclusterLogin.Model
+    Maybe Hawk.Credentials
     -> String
     -> Hawk.Request
     -> Cmd App.Msg
-hawkSend user page request =
+hawkSend credentials page request =
     let
         pagedRequest =
             { request | id = page ++ request.id }
     in
-    case user.credentials of
+    case credentials of
         Just credentials ->
             Hawk.send pagedRequest credentials
                 |> Cmd.map App.HawkMsg
@@ -278,25 +214,11 @@ viewRoute model =
         App.HomeRoute ->
             App.Home.view model
 
-        App.LoginRoute _ _ ->
-            -- TODO: this should be already a view on TaskclusterLogin
-            text "Logging you in ..."
-
-        App.LogoutRoute ->
-            -- TODO: this should be already a view on TaskclusterLogin
-            text "Logging you out ..."
-
-        App.TokensRoute ->
-            Html.map App.TokensMsg (App.Tokens.view model.tokens)
-
-        App.ToolToolRoute ->
-            Html.map App.ToolToolMsg (App.ToolTool.view model.tooltool)
-
         App.TreeStatusRoute route ->
             App.TreeStatus.view
                 route
-                model.user
-                model.userScopes
+                model.taskclusterCredentials
+                model.taskclusterScopes
                 model.treestatus
                 |> Html.map App.TreeStatusMsg
 
@@ -304,6 +226,6 @@ viewRoute model =
 subscriptions : App.Model -> Sub App.Msg
 subscriptions model =
     Sub.batch
-        [ TaskclusterLogin.subscriptions App.TaskclusterLoginMsg
-        , Hawk.subscriptions App.HawkMsg
+        [ Hawk.subscriptions App.HawkMsg
+        , Time.every (50 * Time.second) App.CheckTaskclusterCredentials
         ]

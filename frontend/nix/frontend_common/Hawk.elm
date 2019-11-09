@@ -4,7 +4,6 @@ import Http
 import Json.Decode as JsonDecode
 import Json.Encode as JsonEncode
 import RemoteData exposing (WebData)
-import TaskclusterLogin as User
 
 
 type alias RequestID =
@@ -46,7 +45,14 @@ update msg =
 -- Encode Http request in json to pass it through ports
 
 
-send : Request -> User.Credentials -> Cmd Msg
+type alias Credentials =
+    { clientId : String
+    , accessToken : String
+    , expires : Int
+    }
+
+
+send : Request -> Credentials -> Cmd Msg
 send request credentials =
     let
         requestJson =
@@ -158,4 +164,4 @@ subscriptions outMsg =
 port hawk_send_request : (String -> msg) -> Sub msg
 
 
-port hawk_add_header : ( String, User.Credentials ) -> Cmd msg
+port hawk_add_header : ( String, Credentials ) -> Cmd msg

@@ -1,7 +1,5 @@
 module App exposing (..)
 
-import App.Tokens
-import App.ToolTool
 import App.TreeStatus
 import App.TreeStatus.Form
 import App.TreeStatus.Types
@@ -9,7 +7,7 @@ import App.Types
 import App.UserScopes
 import Hawk
 import Navigation
-import TaskclusterLogin
+import Time exposing (Time)
 import UrlParser exposing ((</>), (<?>))
 
 
@@ -23,18 +21,12 @@ import UrlParser exposing ((</>), (<?>))
 type Route
     = NotFoundRoute
     | HomeRoute
-    | LoginRoute (Maybe String) (Maybe String)
-    | LogoutRoute
-    | TokensRoute
-    | ToolToolRoute
     | TreeStatusRoute App.TreeStatus.Types.Route
 
 
 pages : List (App.Types.Page Route b)
 pages =
-    [ App.Tokens.page TokensRoute
-    , App.ToolTool.page ToolToolRoute
-    , App.TreeStatus.page TreeStatusRoute
+    [ App.TreeStatus.page TreeStatusRoute
     ]
 
 
@@ -47,46 +39,27 @@ routeParser =
                 |> List.append
                     [ UrlParser.map HomeRoute UrlParser.top
                     , UrlParser.map NotFoundRoute (UrlParser.s "404")
-                    , UrlParser.map LoginRoute
-                        (UrlParser.s "login"
-                            <?> UrlParser.stringParam "code"
-                            <?> UrlParser.stringParam "state"
-                        )
-                    , UrlParser.map LogoutRoute (UrlParser.s "logout")
                     ]
                 |> UrlParser.oneOf
     in
-        UrlParser.s "static" </> (UrlParser.s "ui" </> parser)
+    UrlParser.s "static" </> (UrlParser.s "ui" </> parser)
 
 
 reverseRoute : Route -> String
 reverseRoute route =
     let
         path =
-          case route of
-              NotFoundRoute ->
-                  "/404"
+            case route of
+                NotFoundRoute ->
+                    "/404"
 
-              HomeRoute ->
-                  "/"
+                HomeRoute ->
+                    "/"
 
-              LoginRoute _ _ ->
-                  "/login"
-
-              LogoutRoute ->
-                  "/logout"
-
-              TokensRoute ->
-                  "/tokens"
-
-              ToolToolRoute ->
-                  "/tooltool"
-
-              TreeStatusRoute route ->
-                  App.TreeStatus.reverseRoute route
+                TreeStatusRoute route ->
+                    App.TreeStatus.reverseRoute route
     in
-        "/static/ui" ++ path
-        |> Debug.log "PATH"
+    "/static/ui" ++ path
 
 
 parseLocation : Navigation.Location -> Route
@@ -103,17 +76,64 @@ navigateTo route =
         |> Navigation.newUrl
 
 
+loginUrl : Model -> String
+loginUrl model =
+    let
+        loginParams =
+            [ ( "action", "login" )
+            , ( "client_id", "releng-treestatus-" ++ model.channel )
+            , ( "return_url"
+              , model.history
+                    |> List.head
+                    |> Maybe.map .href
+                    |> Maybe.withDefault ""
+              )
+            , ( "taskcluster_url", model.taskclusterRootUrl )
+            , ( "scope", "project:releng:services/treestatus/*" )
+            ]
+    in
+    "/static/login.html?"
+        ++ (loginParams
+                |> List.map (\( name, value ) -> name ++ "=" ++ value)
+                |> String.join "&"
+           )
 
+
+logoutUrl : Model -> String
+logoutUrl model =
+    let
+        loginParams =
+            [ ( "action", "logout" )
+            , ( "return_url"
+              , model.history
+                    |> List.head
+                    |> Maybe.map .href
+                    |> Maybe.withDefault ""
+              )
+            ]
+    in
+    "/static/login.html?"
+        ++ (loginParams
+                |> List.map (\( name, value ) -> name ++ "=" ++ value)
+                |> String.join "&"
+           )
+
+
+
+--
+-- TASKCLUSTER AUTH
+--
 --
 -- FLAGS
 --
 
 
 type alias Flags =
-    { auth0 : Maybe TaskclusterLogin.Tokens
+    { taskclusterCredentials : Maybe Hawk.Credentials
+    , taskclusterRootUrl : String
     , treestatusUrl : String
     , version : String
-    , channel: String
+    , channel : String
     }
 
 
@@ -126,10 +146,9 @@ type alias Flags =
 type alias Model =
     { history : List Navigation.Location
     , route : Route
-    , user : TaskclusterLogin.Model
-    , userScopes : App.UserScopes.Model
-    , tokens : App.Tokens.Model
-    , tooltool : App.ToolTool.Model
+    , taskclusterRootUrl : String
+    , taskclusterCredentials : Maybe Hawk.Credentials
+    , taskclusterScopes : App.UserScopes.Model
     , treestatus : App.TreeStatus.Types.Model App.TreeStatus.Form.AddTree App.TreeStatus.Form.UpdateTree App.TreeStatus.Form.UpdateStack App.TreeStatus.Form.UpdateLog
     , version : String
     , channel : String
@@ -145,9 +164,8 @@ type alias Model =
 type Msg
     = UrlChange Navigation.Location
     | NavigateTo Route
-    | TaskclusterLoginMsg TaskclusterLogin.Msg
+    | NavigateToUrl String
     | HawkMsg Hawk.Msg
     | UserScopesMsg App.UserScopes.Msg
-    | TokensMsg App.Tokens.Msg
-    | ToolToolMsg App.ToolTool.Msg
     | TreeStatusMsg App.TreeStatus.Types.Msg
+    | CheckTaskclusterCredentials Time

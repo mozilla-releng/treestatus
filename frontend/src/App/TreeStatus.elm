@@ -14,7 +14,6 @@ import Html.Attributes exposing (..)
 import Http
 import Navigation
 import RemoteData
-import TaskclusterLogin
 import Title
 import UrlParser exposing ((</>))
 import Utils
@@ -39,24 +38,24 @@ routeParser =
 reverseRoute : App.TreeStatus.Types.Route -> String
 reverseRoute route =
     let
-      path =
-        case route of
-            App.TreeStatus.Types.ShowTreesRoute ->
-                "/"
+        path =
+            case route of
+                App.TreeStatus.Types.ShowTreesRoute ->
+                    "/"
 
-            App.TreeStatus.Types.AddTreeRoute ->
-                "/add"
+                App.TreeStatus.Types.AddTreeRoute ->
+                    "/add"
 
-            App.TreeStatus.Types.UpdateTreesRoute ->
-                "/update"
+                App.TreeStatus.Types.UpdateTreesRoute ->
+                    "/update"
 
-            App.TreeStatus.Types.DeleteTreesRoute ->
-                "/delete"
+                App.TreeStatus.Types.DeleteTreesRoute ->
+                    "/delete"
 
-            App.TreeStatus.Types.ShowTreeRoute name ->
-                "/show/" ++ name
+                App.TreeStatus.Types.ShowTreeRoute name ->
+                    "/show/" ++ name
     in
-        "/treestatus" ++ path
+    "/treestatus" ++ path
 
 
 page : (App.TreeStatus.Types.Route -> a) -> App.Types.Page a b
@@ -186,7 +185,8 @@ update currentRoute msg model =
             in
             ( newModel
             , Cmd.batch
-                [ "/static/ui" ++ (reverseRoute newRoute)
+                [ "/static/ui"
+                    ++ reverseRoute newRoute
                     |> Navigation.newUrl
                 , newCmd
                 ]
@@ -229,7 +229,8 @@ update currentRoute msg model =
             , Cmd.batch
                 [ Utils.performMsg App.TreeStatus.Form.resetAddTree
                     |> Cmd.map App.TreeStatus.Types.FormAddTreeMsg
-                , "/static/ui" ++ (reverseRoute App.TreeStatus.Types.ShowTreesRoute)
+                , "/static/ui"
+                    ++ reverseRoute App.TreeStatus.Types.ShowTreesRoute
                     |> Navigation.newUrl
                 ]
             , Nothing
@@ -252,7 +253,8 @@ update currentRoute msg model =
                 , App.TreeStatus.Api.fetchRecentChanges model.baseUrl
                 , Utils.performMsg App.TreeStatus.Form.resetUpdateTree
                     |> Cmd.map App.TreeStatus.Types.FormUpdateTreesMsg
-                , "/static/ui" ++ (reverseRoute App.TreeStatus.Types.ShowTreesRoute)
+                , "/static/ui"
+                    ++ reverseRoute App.TreeStatus.Types.ShowTreesRoute
                     |> Navigation.newUrl
                 ]
             , Nothing
@@ -341,7 +343,8 @@ update currentRoute msg model =
 
         App.TreeStatus.Types.DeleteTreesResult result ->
             ( { model | treesAlerts = App.Utils.getAlerts result }
-            , "/static/ui" ++ (reverseRoute App.TreeStatus.Types.ShowTreesRoute)
+            , "/static/ui"
+                ++ reverseRoute App.TreeStatus.Types.ShowTreesRoute
                 |> Navigation.newUrl
             , Nothing
             )
@@ -530,30 +533,25 @@ update currentRoute msg model =
 
 view :
     App.TreeStatus.Types.Route
-    -> TaskclusterLogin.Model
+    -> Maybe Hawk.Credentials
     -> App.UserScopes.Model
     -> App.TreeStatus.Types.Model App.TreeStatus.Form.AddTree App.TreeStatus.Form.UpdateTree App.TreeStatus.Form.UpdateStack App.TreeStatus.Form.UpdateLog
     -> Html App.TreeStatus.Types.Msg
-view route user scopes model =
+view route credentials scopes model =
     let
         isLoadingRemoteData remotedata =
             RemoteData.isLoading remotedata || RemoteData.isNotAsked remotedata
 
         isLoadingScopes =
-            case user.tokens of
+            case credentials of
                 Just _ ->
-                    case user.credentials of
-                        Just _ ->
-                            if List.length scopes.scopes == 0 then
-                                True
-                            else
-                                False
-
-                        _ ->
-                            True
+                    if List.length scopes.scopes == 0 then
+                        True
+                    else
+                        False
 
                 _ ->
-                    False
+                    True
 
         isLoading =
             case route of

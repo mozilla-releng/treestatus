@@ -18,28 +18,26 @@ var getData = function(name, _default) {
 };
 
 var title = require('./title');
-var redirect = require('./redirect');
 var localstorage = require('./localstorage');
 var hawk = require('./hawk');
 
 var release_version = getData('release-version', process.env.RELEASE_VERSION)
 var release_channel = getData('release-channel', process.env.RELEASE_CHANNEL);
 
-var AUTH_KEY = 'auth';  // do not change this key
+var TASKCLUSTER_CREDENTIALS_KEY = 'taskcluster_login_credentials';
 
 var init = function() {
     // Start the ELM application
     var app = require('./Main.elm').Main.fullscreen({
-      auth0: localstorage.load_item(AUTH_KEY),
+      taskclusterCredentials: localstorage.load_item(TASKCLUSTER_CREDENTIALS_KEY),
+      taskclusterRootUrl: getData('taskcluster-root-url', process.env.TASKCLUSTER_ROOT_URL),
       treestatusUrl: getData('treestatus-api-url', process.env.TREESTATUS_API_URL),
       version: release_version,
       channel: release_channel,
     });
 
     // Setup ports
-    localstorage.init(app, AUTH_KEY);
     hawk(app);
-    redirect(app);
     title(app);
 };
 

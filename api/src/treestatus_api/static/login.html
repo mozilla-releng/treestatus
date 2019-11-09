@@ -49,12 +49,12 @@
       })
     }
 
-    function fetchCredentials(token) {
+    function fetchCredentials(data) {
       const taskclusterUrl = localStorage.getItem(`${prefix}_taskcluster_url`);
       return request(`${taskclusterUrl}/login/oauth/credentials`, {
         mode: 'cors',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${data.token_type} ${data.access_token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -123,7 +123,7 @@
 
         status.innerText = "Logging out ...";
 
-        localStorage.removeItem(`${prefix}_access_token`);
+        localStorage.removeItem(`${prefix}_code`);
         localStorage.removeItem(`${prefix}_client_id`);
         localStorage.removeItem(`${prefix}_scope`);
         localStorage.removeItem(`${prefix}_return_url`);
@@ -141,11 +141,14 @@
         // HANLE TASKCLUSTER CALLBACK
       } else if (qs.state === localStorage.getItem(`${prefix}_state`) && qs.code) {
         fetchToken(qs.code).then(data => {
-          localStorage.setItem(`${prefix}_access_token`, data.access_token);
-          // Exchange the third party token for Taskcluster credentials
-          fetchCredentials(data.access_token).then(data => {
+          localStorage.setItem(`${prefix}_code`, JSON.stringify(data));
+          fetchCredentials(data).then(data => {
             status.innerText = 'Redirecting back ...';
-            localStorage.setItem(`${prefix}_credentials`, JSON.stringify(data.credentials));
+            localStorage.setItem(`${prefix}_credentials`, JSON.stringify({
+              expires: (new Date(data.expires)).getTime(),
+              clientId: data.credentials.clientId,
+              accessToken: data.credentials.accessToken,
+            }));
             const return_url = localStorage.getItem(`${prefix}_return_url`);
             window.location.replace(return_url);
           })

@@ -13,6 +13,7 @@ import Utils
 type alias Model =
     { timestamp : Time.Time
     , scopes : List String
+    , taskclusterRootUrl : String
     }
 
 
@@ -27,10 +28,11 @@ decoderScopes =
     JsonDecode.at [ "scopes" ] (JsonDecode.list JsonDecode.string)
 
 
-init : Model
-init =
+init : String -> Model
+init taskclusterRootUrl =
     { timestamp = 0.0
     , scopes = []
+    , taskclusterRootUrl = taskclusterRootUrl
     }
 
 
@@ -52,7 +54,7 @@ update msg model =
                     [ Http.header "Accept" "application/json" ]
 
                 url =
-                    "https://auth.taskcluster.net/v1/scopes/current"
+                    model.taskclusterRootUrl ++ "/api/auth/v1/scopes/current"
 
                 request =
                     Hawk.Request "FetchedScopes" "GET" url headers Http.emptyBody

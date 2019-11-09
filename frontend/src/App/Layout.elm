@@ -5,7 +5,6 @@ import App.TreeStatus.Types
 import App.Utils
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import TaskclusterLogin
 import Utils
 
 
@@ -32,31 +31,34 @@ viewDropdown title pages =
 
 viewUser : App.Model -> List (Html App.Msg)
 viewUser model =
-    let
-        _ = Debug.log "MODEL" model
-        loginParams =
-            [ ( "action", "login" )
-            , ( "client_id", "releng-treestatus-" ++ model.channel )
-            , ( "return_url", model.history
-                                |> List.head
-                                |> Maybe.map .href
-                                |> Maybe.withDefault ""
-              )
-            , ( "taskcluster_url", "https://firefox-ci-tc.services.mozilla.com")
-            , ( "scope", "project:releng:services/treestatus/*" )
-            ]
-    in
-    case model.user.credentials of
+    case model.taskclusterCredentials of
         Just user ->
-            viewDropdown user.clientId
+            let
+                prefix =
+                    "mozilla-auth0/ad|Mozilla-LDAP|"
+
+                username =
+                    user.clientId
+                        |> String.dropLeft (String.length prefix)
+                        |> String.split "/"
+                        |> List.head
+                        |> Maybe.withDefault user.clientId
+
+                email =
+                    if String.startsWith prefix user.clientId then
+                        username ++ "@mozilla.com"
+                    else
+                        user.clientId
+            in
+            viewDropdown email
                 [ a
                     [ class "dropdown-item"
-                    , href "https://tools.taskcluster.net/credentials"
+                    , href <| model.taskclusterRootUrl ++ "/profile"
                     , target "_blank"
                     ]
-                    [ text "Manage credentials" ]
+                    [ text "Manage profile" ]
                 , a
-                    [ Utils.onClick (App.NavigateTo App.LogoutRoute)
+                    [ Utils.onClick <| App.NavigateToUrl <| App.logoutUrl model
                     , href "#"
                     , class "dropdown-item"
                     ]
@@ -64,18 +66,8 @@ viewUser model =
                 ]
 
         Nothing ->
-            let
-                loginMsg =
-                    App.TaskclusterLoginMsg <| TaskclusterLogin.Login
-            in
             [ a
-                --[ Utils.onClick loginMsg
-                [ href <|
-                    "/static/login.html?"
-                        ++ (loginParams
-                                |> List.map (\( name, value ) -> name ++ "=" ++ value)
-                                |> String.join "&"
-                           )
+                [ href <| App.loginUrl model
                 , class "nav-link"
                 ]
                 [ text "Login" ]
@@ -131,9 +123,6 @@ view viewRoute model =
                 App.HomeRoute ->
                     "home"
 
-                App.ToolToolRoute ->
-                    "tooltool"
-
                 App.TreeStatusRoute _ ->
                     "treestatus"
 
@@ -141,20 +130,15 @@ view viewRoute model =
                     ""
 
         isLoading =
-            case model.user.tokens of
+            case model.taskclusterCredentials of
                 Just _ ->
-                    case model.user.credentials of
-                        Just _ ->
-                            if List.length model.userScopes.scopes == 0 then
-                                True
-                            else
-                                False
-
-                        _ ->
-                            True
+                    if List.length model.taskclusterScopes.scopes == 0 then
+                        True
+                    else
+                        False
 
                 _ ->
-                    False
+                    True
     in
     div [ id ("page-" ++ routeName) ]
         [ nav

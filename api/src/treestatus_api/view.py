@@ -49,6 +49,7 @@ def index_html():
             ('release-version', app.config['VERSION']),
             ('release-channel', app.config['ENV']),
             ('treestatus-api-url', app.config['APP_URL']),
+            ('taskcluster-root-url', app.config['TASKCLUSTER_ROOT_URL']),
             ]:
         body_attrs += f'data-{attr}="{attr_value}" '
 

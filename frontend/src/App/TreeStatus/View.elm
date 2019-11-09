@@ -12,8 +12,22 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import RemoteData
 import String
-import TaskclusterLogin
 import Utils
+
+
+shortUsername : String -> String
+shortUsername username =
+    let
+        parts =
+            String.split "/" username
+    in
+    if List.length parts == 2 then
+        parts
+            |> List.reverse
+            |> List.head
+            |> Maybe.withDefault username
+    else
+        username
 
 
 hasScope : String -> List String -> Bool
@@ -137,7 +151,7 @@ viewRecentChange scopes showUpdateStackForm formUpdateStack recentChange =
                     []
                     [ text "At "
                     , em [] [ text (parseTimestamp recentChange.when) ]
-                    , b [] [ text (" " ++ TaskclusterLogin.shortUsername recentChange.who) ]
+                    , b [] [ text (" " ++ shortUsername recentChange.who) ]
                     , text " changed trees:"
                     ]
                  , ul [] (List.map (viewRecentChangeTree recentChange.status) recentChange.trees)

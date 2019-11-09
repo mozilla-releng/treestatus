@@ -64,7 +64,7 @@ type Msg
 
 
 init : String -> Maybe Tokens -> ( Model, Cmd Msg )
-init backend_url tokens =
+init taskcluster_url credentials =
     let
         model_ =
             { code = Nothing

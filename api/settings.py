@@ -122,9 +122,7 @@ elif secrets['ENV'] == 'dev':
     APP_URL = 'https://stage.treestatus.mozilla-releng.net'
 
 SECURITY = copy.deepcopy(treestatus_api.lib.security.DEFAULT_CONFIG)
-for url in ["https://login.taskcluster.net",
-            "https://auth.taskcluster.net",
-            TASKCLUSTER_ROOT_URL,
+for url in [TASKCLUSTER_ROOT_URL,
             APP_URL,
             ]:
     SECURITY['content_security_policy']['connect-src'] += f' {url}'

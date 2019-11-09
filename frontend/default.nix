@@ -22,5 +22,4 @@ in mkFrontend {
   postInstall = ''
     cp -R src/static/* $out/
   '';
-  doCheck = false;
 }

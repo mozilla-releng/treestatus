@@ -19,8 +19,8 @@ def create_app(config=None):
         config=config,
         extensions=[
             'log',
-            'security',
-            'cors',
+            #'security',
+            #'cors',
             'api',
             'auth',
             'db',
