@@ -107,7 +107,7 @@ secrets = {
 
         # Cache, for more details look at src/treestatus_api/lib/cache.py
         ('CACHE_TYPE', default('simple')),
-        ('CACHE_REDIS_URL', default(None)),
+        ('REDIS_URL', default(None)),
     ]
 }
 
@@ -141,6 +141,6 @@ CACHE['CACHE_DEFAULT_TIMEOUT'] = 60 * 5
 CACHE['CACHE_KEY_PREFIX'] = 'treestatus_api_'
 CACHE['CACHE_TYPE'] = secrets['CACHE_TYPE']
 
-if secrets['CACHE_REDIS_URL']:
+if secrets['REDIS_URL']:
     CACHE['CACHE_TYPE'] = 'redis'
-    CACHE['CACHE_REDIS_URL'] = secrets['CACHE_REDIS_URL']
+    CACHE['CACHE_REDIS_URL'] = secrets['REDIS_URL']
