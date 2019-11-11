@@ -194,12 +194,12 @@ fetchTreeLogs url name all =
     case all of
         True ->
             get App.TreeStatus.Types.GetTreeLogsAllResult
-                (url ++ "/trees/" ++ name ++ "/logs?all=1")
+                (url ++ "/trees/" ++ name ++ "/logs_all")
                 decoderTreeLogs
 
         False ->
             get App.TreeStatus.Types.GetTreeLogsResult
-                (url ++ "/trees/" ++ name ++ "/logs?all=0")
+                (url ++ "/trees/" ++ name ++ "/logs")
                 decoderTreeLogs
 
 

@@ -151,7 +151,7 @@ viewRecentChange scopes showUpdateStackForm formUpdateStack recentChange =
                     []
                     [ text "At "
                     , em [] [ text (parseTimestamp recentChange.when) ]
-                    , b [] [ text (" " ++ shortUsername recentChange.who) ]
+                    , b [] [ text (" " ++ shortUsername (App.Utils.niceClientId recentChange.who)) ]
                     , text " changed trees:"
                     ]
                  , ul [] (List.map (viewRecentChangeTree recentChange.status) recentChange.trees)

@@ -202,3 +202,22 @@ treeStatusLevel status =
 
         _ ->
             "default"
+
+
+niceClientId : String -> String
+niceClientId clientId =
+    let
+        prefix =
+            "mozilla-auth0/ad|Mozilla-LDAP|"
+
+        username =
+            clientId
+                |> String.dropLeft (String.length prefix)
+                |> String.split "/"
+                |> List.head
+                |> Maybe.withDefault clientId
+    in
+    if String.startsWith prefix clientId then
+        username ++ "@mozilla.com"
+    else
+        clientId

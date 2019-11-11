@@ -594,7 +594,7 @@ def kill_trees(body):
     return None, 204
 
 
-def get_logs(tree, all=0):
+def _get_logs(tree, all=0):
     session = flask.current_app.db.session
 
     # verify the tree exists first
@@ -607,18 +607,16 @@ def get_logs(tree, all=0):
     if not all:
         q = q.limit(TREE_SUMMARY_LOG_LIMIT)
 
-    logs = []
-    for log in q:
-        logs.append(dict(
-            id=log.id,
-            tree=log.tree,
-            when=log.when,
-            who=log.who,
-            status=log.status,
-            reason=log.reason,
-            tags=[str(log._tags)],
-        ))
+    logs = [l.to_dict() for l in q]
     return dict(result=logs)
+
+
+def get_logs(tree, all=0):
+    return _get_logs(tree, 0)
+
+
+def get_logs_all(tree, all=0):
+    return _get_logs(tree, 1)
 
 
 def v0_get_trees(format=None):

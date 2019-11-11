@@ -33,24 +33,7 @@ viewUser : App.Model -> List (Html App.Msg)
 viewUser model =
     case model.taskclusterCredentials of
         Just user ->
-            let
-                prefix =
-                    "mozilla-auth0/ad|Mozilla-LDAP|"
-
-                username =
-                    user.clientId
-                        |> String.dropLeft (String.length prefix)
-                        |> String.split "/"
-                        |> List.head
-                        |> Maybe.withDefault user.clientId
-
-                email =
-                    if String.startsWith prefix user.clientId then
-                        username ++ "@mozilla.com"
-                    else
-                        user.clientId
-            in
-            viewDropdown email
+            viewDropdown (App.Utils.niceClientId user.clientId)
                 [ a
                     [ class "dropdown-item"
                     , href <| model.taskclusterRootUrl ++ "/profile"

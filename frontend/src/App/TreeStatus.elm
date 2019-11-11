@@ -557,7 +557,6 @@ view route credentials scopes model =
             case route of
                 App.TreeStatus.Types.ShowTreesRoute ->
                     isLoadingRemoteData model.trees
-                        || isLoadingScopes
 
                 App.TreeStatus.Types.AddTreeRoute ->
                     False
@@ -572,7 +571,6 @@ view route credentials scopes model =
                     isLoadingRemoteData model.tree
                         || isLoadingRemoteData model.treeLogs
                         || RemoteData.isLoading model.treeLogsAll
-                        || isLoadingScopes
     in
     div [ class "container" ]
         [ h1 [] [ text "TreeStatus" ]
