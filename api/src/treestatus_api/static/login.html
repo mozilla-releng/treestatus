@@ -123,12 +123,13 @@
 
         status.innerText = "Logging out ...";
 
-        localStorage.removeItem(`${prefix}_code`);
         localStorage.removeItem(`${prefix}_client_id`);
-        localStorage.removeItem(`${prefix}_scope`);
+        localStorage.removeItem(`${prefix}_code`);
+        localStorage.removeItem(`${prefix}_credentials`);
         localStorage.removeItem(`${prefix}_return_url`);
-        localStorage.removeItem(`${prefix}_taskcluster_url`);
+        localStorage.removeItem(`${prefix}_scope`);
         localStorage.removeItem(`${prefix}_state`);
+        localStorage.removeItem(`${prefix}_taskcluster_url`);
 
         window.location.replace(qs.return_url);
 

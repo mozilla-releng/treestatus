@@ -102,7 +102,7 @@ update msg model =
             )
 
         App.NavigateToUrl url ->
-            ( model, Navigation.newUrl url )
+            ( model, Navigation.load url )
 
         --
         -- HAWK REQUESTS
@@ -179,7 +179,7 @@ update msg model =
                         |> Maybe.map .expires
                         |> Maybe.withDefault 0
             in
-            if time > toFloat expires then
+            if expires /= 0 && time > toFloat expires then
                 -- XXX: create a port to only request new taskcluster credentials
                 model ! [ Utils.performMsg (App.NavigateToUrl <| App.loginUrl model) ]
             else

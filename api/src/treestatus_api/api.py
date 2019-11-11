@@ -602,13 +602,22 @@ def get_logs(tree, all=0):
     if not t:
         raise werkzeug.exceptions.NotFound('No such tree')
 
-    logs = []
     q = session.query(treestatus_api.models.Log).filter_by(tree=tree)
     q = q.order_by(treestatus_api.models.Log.when.desc())
     if not all:
         q = q.limit(TREE_SUMMARY_LOG_LIMIT)
 
-    logs = [l.to_dict() for l in q]
+    logs = []
+    for log in q:
+        logs.append(dict(
+            id=log.id,
+            tree=log.tree,
+            when=log.when,
+            who=log.who,
+            status=log.status,
+            reason=log.reason,
+            tags=[str(log._tags)],
+        ))
     return dict(result=logs)
 
 

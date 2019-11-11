@@ -138,7 +138,7 @@ view viewRoute model =
                         False
 
                 _ ->
-                    True
+                    False
     in
     div [ id ("page-" ++ routeName) ]
         [ nav
