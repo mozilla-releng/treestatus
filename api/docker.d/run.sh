@@ -1,11 +1,8 @@
 #!/bin/sh
 set -e
 
-pushd `dirname $0` &>/dev/null
-MY_DIR=$(pwd)
-popd &>/dev/null
-
 EXTRA_ARGS=""
+MY_DIR=`realpath \`dirname $0\``
 
 if [ "$ENV" == "localdev" ]
 then

@@ -594,7 +594,7 @@ def kill_trees(body):
     return None, 204
 
 
-def get_logs(tree, all=0):
+def _get_logs(tree, all=0):
     session = flask.current_app.db.session
 
     # verify the tree exists first
@@ -602,7 +602,6 @@ def get_logs(tree, all=0):
     if not t:
         raise werkzeug.exceptions.NotFound('No such tree')
 
-    logs = []
     q = session.query(treestatus_api.models.Log).filter_by(tree=tree)
     q = q.order_by(treestatus_api.models.Log.when.desc())
     if not all:
@@ -610,6 +609,14 @@ def get_logs(tree, all=0):
 
     logs = [l.to_dict() for l in q]
     return dict(result=logs)
+
+
+def get_logs(tree, all=0):
+    return _get_logs(tree, 0)
+
+
+def get_logs_all(tree, all=0):
+    return _get_logs(tree, 1)
 
 
 def v0_get_trees(format=None):

@@ -10,6 +10,7 @@ import taskcluster
 import treestatus_api.config
 import treestatus_api.lib.flask
 import treestatus_api.models  # noqa
+import treestatus_api.view
 
 
 def create_app(config=None):
@@ -26,6 +27,8 @@ def create_app(config=None):
             'cache',
             'pulse',
         ],
+        static_folder=None,
+        static_url_path='/static',
     )
 
     app.notify = taskcluster.Notify(
@@ -37,6 +40,8 @@ def create_app(config=None):
             ),
         ),
     )
+
+    app.add_url_rule('/static/<path:filename>', 'static_handler', treestatus_api.view.static_handler)
 
     app.api.register(os.path.join(os.path.dirname(__file__), 'api.yml'))
 
