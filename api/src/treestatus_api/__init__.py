@@ -17,32 +17,20 @@ def create_app(config=None):
     app = treestatus_api.lib.flask.create_app(
         project_name=treestatus_api.config.PROJECT_NAME,
         config=config,
-        extensions=[
-            'log',
-            'security',
-            'cors',
-            'api',
-            'auth',
-            'db',
-            'cache',
-            'pulse',
-        ],
+        extensions=["log", "security", "cors", "api", "auth", "db", "cache", "pulse"],
         static_folder=None,
-        static_url_path='/static',
+        static_url_path="/static",
     )
 
     app.notify = taskcluster.Notify(
         options=dict(
-            rootUrl=app.config['TASKCLUSTER_ROOT_URL'],
-            credentials=dict(
-                clientId=app.config['TASKCLUSTER_CLIENT_ID'],
-                accessToken=app.config['TASKCLUSTER_ACCESS_TOKEN'],
-            ),
-        ),
+            rootUrl=app.config["TASKCLUSTER_ROOT_URL"],
+            credentials=dict(clientId=app.config["TASKCLUSTER_CLIENT_ID"], accessToken=app.config["TASKCLUSTER_ACCESS_TOKEN"]),
+        )
     )
 
-    app.add_url_rule('/static/<path:filename>', 'static_handler', treestatus_api.view.static_handler)
+    app.add_url_rule("/static/<path:filename>", "static_handler", treestatus_api.view.static_handler)
 
-    app.api.register(os.path.join(os.path.dirname(__file__), 'api.yml'))
+    app.api.register(os.path.join(os.path.dirname(__file__), "api.yml"))
 
     return app

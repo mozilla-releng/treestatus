@@ -1,0 +1,24 @@
+include CONTRIBUTING.rst
+include HISTORY.rst
+include LICENSE
+include README.rst
+include CODE_OF_CONDUCT.md
+include pyproject.toml
+include settings.py
+include steup.cfg
+include setup.py
+include version.txt
+
+recursive-include src *
+recursive-include requirements *.in
+recursive-include requirements *.txt
+
+exclude .taskcluster.yml
+exclude Dockerfile*
+exclude docker.d
+exclude tox.ini
+
+recursive-exclude docker.d *.sh *.pem
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude tests *
