@@ -244,23 +244,45 @@ paths:
           schema:
             type: string
 
-  /trees/{tree}/logs:
+  /trees/{tree}/logs_all:
     get:
-      operationId: "treestatus_api.api.get_logs"
+      operationId: "treestatus_api.api.get_logs_all"
       description: |
-        Get a log of changes for the given tree.  This is limited to the most
-        recent 5 entries by default.  Use `?all=1` to get all log entries.
+        Get all log of changes for the given tree.
+      consumes:
+        - application/json
       parameters:
         - name: tree
           in: path
           description: Tree
           required: true
           type: string
-        - name: all
-          in: query
+      responses:
+        200:
+          description: Tree
+          schema:
+            type: object
+            required:
+              - result
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/TreeLog'
+
+  /trees/{tree}/logs:
+    get:
+      operationId: "treestatus_api.api.get_logs"
+      description: |
+        Get a short log of changes for the given tree.
+      consumes:
+        - application/json
+      parameters:
+        - name: tree
+          in: path
+          description: Tree
           required: true
-          default: 0
-          type: integer
+          type: string
       responses:
         200:
           description: Tree

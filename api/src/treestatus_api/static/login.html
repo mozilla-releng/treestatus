@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Taskcluster Auth</title>
+</head>
+
+<body>
+  <h1 id="status"></h1>
+  <script>
+    'use strict';
+
+    const prefix = "taskcluster_login";
+    const qs = parseQuery(window.location.search);
+    const status = document.getElementById('status');
+
+    function parseQuery(q) {
+      const qs = q.replace('?', '').split('&');
+      const data = qs.reduce((acc, curr) => {
+        const [parameter, value] = curr.split('=');
+        acc[parameter] = value;
+        return acc;
+      }, {});
+      return data;
+    }
+
+    function randomState() {
+      return Math.floor(Math.random() * 50);
+    }
+
+    function request(url, options) {
+      return fetch(url, options)
+        .then(response => {
+          if (!response.ok) {
+            status.innerText = "ERROR: " + response.statusText;
+            throw new Error(response.statusText);
+          }
+          return response.json();
+        })
+    }
+
+    function fetchToken(code) {
+      const taskclusterUrl = localStorage.getItem(`${prefix}_taskcluster_url`);
+      const clientId = localStorage.getItem(`${prefix}_client_id`);
+      return request(`${taskclusterUrl}/login/oauth/token`, {
+        method: 'POST',
+        body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&client_id=${clientId}`,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      })
+    }
+
+    function fetchCredentials(data) {
+      const taskclusterUrl = localStorage.getItem(`${prefix}_taskcluster_url`);
+      return request(`${taskclusterUrl}/login/oauth/credentials`, {
+        mode: 'cors',
+        headers: {
+          Authorization: `${data.token_type} ${data.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+    function ensureParameters(qs, parameters) {
+      let missing = [];
+      for (let parameter of parameters) {
+        if (!qs.hasOwnProperty(parameter)) {
+          missing.push(parameter);
+        }
+      }
+      return missing;
+    };
+
+    function init() {
+
+      // LOGIN
+      if (qs.action && qs.action === "login") {
+        const errors = ensureParameters(qs, [
+          "return_url",
+          "taskcluster_url",
+          "client_id",
+          "scope",
+        ]);
+        if (errors.length != 0) {
+          status.innerText = `The following parameters are missing for login action: ${errors.join(", ")}`
+          return;
+        };
+
+        status.innerText = "Logging in ...";
+
+        // TODO: handle the case when we are already logged in
+        //       a expiry date in credentials should be less the now + 1min
+        //       if there is nothing to be done immediatly return to return_url
+
+        const redirect_uri = window.location.href.split('?')[0]
+        const state = randomState();
+        const query = [
+          ["client_id", qs.client_id],
+          ["redirect_uri", redirect_uri],
+          ["response_type", "code"],
+          ["scope", qs.scope],
+          ["state", state],
+          ["expires", "1 week"],
+        ].map(([n, v]) => `${n}=${encodeURIComponent(v)}`).join("&");
+
+        localStorage.setItem(`${prefix}_client_id`, qs.client_id);
+        localStorage.setItem(`${prefix}_scope`, qs.scope);
+        localStorage.setItem(`${prefix}_return_url`, qs.return_url);
+        localStorage.setItem(`${prefix}_taskcluster_url`, qs.taskcluster_url);
+        localStorage.setItem(`${prefix}_state`, state);
+
+        const url = `${qs.taskcluster_url}/login/oauth/authorize?${query}`;
+        window.location.replace(url);
+
+        // LOGOUT
+      } else if (qs.action && qs.action === "logout" && qs.return_url) {
+        const errors = ensureParameters(qs, [
+          "return_url",
+        ]);
+        if (errors.length != 0) {
+          status.innerText = `The following parameters are missing for logout action: ${errors.join(", ")}`
+          return;
+        };
+
+        status.innerText = "Logging out ...";
+
+        localStorage.removeItem(`${prefix}_client_id`);
+        localStorage.removeItem(`${prefix}_code`);
+        localStorage.removeItem(`${prefix}_credentials`);
+        localStorage.removeItem(`${prefix}_return_url`);
+        localStorage.removeItem(`${prefix}_scope`);
+        localStorage.removeItem(`${prefix}_state`);
+        localStorage.removeItem(`${prefix}_taskcluster_url`);
+
+        window.location.replace(qs.return_url);
+
+        // TASKCLUSTER ERROR
+      } else if (qs.error) {
+        // The authorization server responded with an error.
+        // The list of error codes can be found in https://tools.ietf.org/html/rfc6749#section-4.1.2.1
+        status.innerText = qs.error;
+
+        // HANLE TASKCLUSTER CALLBACK
+      } else if (qs.state === localStorage.getItem(`${prefix}_state`) && qs.code) {
+        fetchToken(qs.code).then(data => {
+          localStorage.setItem(`${prefix}_code`, JSON.stringify(data));
+          fetchCredentials(data).then(data => {
+            status.innerText = 'Redirecting back ...';
+            localStorage.setItem(`${prefix}_credentials`, JSON.stringify({
+              expires: (new Date(data.expires)).getTime(),
+              clientId: data.credentials.clientId,
+              accessToken: data.credentials.accessToken,
+            }));
+            const return_url = localStorage.getItem(`${prefix}_return_url`);
+            window.location.replace(return_url);
+          })
+        });
+
+        // WE DON't KNOW WHAT TO DO
+      } else {
+        status.innerText = "Unknown action.";
+      }
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

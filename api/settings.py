@@ -4,6 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import base64
+import copy
 import functools
 import os
 
@@ -93,7 +94,6 @@ secrets = {
         ('CORS_RESOURCES', default('*')),
 
         # Security, for more details look at src/treestatus_api/lib/security.py
-        ('SECURITY', default(treestatus_api.lib.security.DEFAULT_CONFIG)),
         ('SECURITY_CSP_REPORT_URI', default(None)),
 
         # Pulse, for more details look at src/treestatus_api/lib/pulse.py
@@ -107,11 +107,25 @@ secrets = {
 
         # Cache, for more details look at src/treestatus_api/lib/cache.py
         ('CACHE_TYPE', default('simple')),
-        ('CACHE_REDIS_URL', default(None)),
+        ('REDIS_URL', default(None)),
     ]
 }
 
 locals().update(secrets)
+
+APP_URL = 'https://treestatus.mozilla-releng.net'
+if secrets['ENV'] == 'localdev':
+    APP_URL = 'https://localhost:8002'
+elif secrets['ENV'] == 'dev':
+    APP_URL = 'https://dev.treestatus.mozilla-releng.net'
+elif secrets['ENV'] == 'staging':
+    APP_URL = 'https://stage.treestatus.mozilla-releng.net'
+
+SECURITY = copy.deepcopy(treestatus_api.lib.security.DEFAULT_CONFIG)
+for url in [TASKCLUSTER_ROOT_URL,
+            APP_URL,
+            ]:
+    SECURITY['content_security_policy']['connect-src'] += f' {url}'
 
 with open(os.path.join(os.path.dirname(__file__), 'version.txt')) as f:
     VERSION = f.read().strip()
@@ -127,6 +141,6 @@ CACHE['CACHE_DEFAULT_TIMEOUT'] = 60 * 5
 CACHE['CACHE_KEY_PREFIX'] = 'treestatus_api_'
 CACHE['CACHE_TYPE'] = secrets['CACHE_TYPE']
 
-if secrets['CACHE_REDIS_URL']:
+if secrets['REDIS_URL']:
     CACHE['CACHE_TYPE'] = 'redis'
-    CACHE['CACHE_REDIS_URL'] = secrets['CACHE_REDIS_URL']
+    CACHE['CACHE_REDIS_URL'] = secrets['REDIS_URL']

@@ -10,8 +10,8 @@ services:
       - ./api:/app
     environment:
       - HOST=0.0.0.0
-      - PORT=8000
-      - APP_URL=https://localhost:8000
+      - PORT=8002
+      - APP_URL=https://localhost:8002
       - APP_SETTINGS=/app/settings.py
       - ENV=localdev
       - DATABASE_URL=postgres://treestatususer:treestatuspassword@db/treestatusdb
@@ -26,7 +26,7 @@ services:
     volumes:
       - dbstore:/var/lib/postgresql/data
     ports:
-      - "8100:5432"
+      - "8102:5432"
     environment:
       - POSTGRES_USER=treestatususer
       - POSTGRES_PASSWORD=treestatuspassword
