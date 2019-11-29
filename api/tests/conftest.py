@@ -9,36 +9,35 @@ import pytest
 
 
 def get_app_config(extra_config):
-    config = {
-        'APP_TESTING': True,
-        'SECRET_KEY': os.urandom(24)
-    }
+    config = {"APP_TESTING": True, "SECRET_KEY": os.urandom(24)}
     config.update(extra_config)
     return config
 
 
 def configure_app(app):
-    '''Configure flask application and ensure all mocks are in place
-    '''
+    """Configure flask application and ensure all mocks are in place
+    """
 
-    if hasattr(app, 'db'):
+    if hasattr(app, "db"):
         app.db.drop_all()
         app.db.create_all()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def app():
-    '''Load treestatus_api in test mode
-    '''
+    """Load treestatus_api in test mode
+    """
     import treestatus_api
 
-    config = get_app_config({
-        'SQLALCHEMY_DATABASE_URI': 'sqlite://',
-        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-        'TASKCLUSTER_ROOT_URL': 'http://taskcluster.mock',
-        'TASKCLUSTER_CLIENT_ID': 'something',
-        'TASKCLUSTER_ACCESS_TOKEN': 'something',
-    })
+    config = get_app_config(
+        {
+            "SQLALCHEMY_DATABASE_URI": "sqlite://",
+            "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+            "TASKCLUSTER_ROOT_URL": "http://taskcluster.mock",
+            "TASKCLUSTER_CLIENT_ID": "something",
+            "TASKCLUSTER_ACCESS_TOKEN": "something",
+        }
+    )
     app = treestatus_api.create_app(config)
 
     with app.app_context():
