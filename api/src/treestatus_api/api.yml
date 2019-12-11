@@ -285,7 +285,7 @@ paths:
           type: string
         - name: all
           in: query
-          required: true
+          required: false
           default: 0
           type: integer
       responses:
