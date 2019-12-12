@@ -191,7 +191,7 @@ paths:
           type: string
         - name: body
           in: body
-          description: Tree
+          description: Tree 
           required: true
           schema:
             $ref: '#/definitions/Tree'
@@ -283,11 +283,6 @@ paths:
           description: Tree
           required: true
           type: string
-        - name: all
-          in: query
-          required: true
-          default: 0
-          type: integer
       responses:
         200:
           description: Tree
@@ -440,7 +435,7 @@ definitions:
       assigned at the time.  This is useful for analysis of tree closures and
       their causes.
     required:
-      - id
+      - id 
       - tree
       - when
       - who
@@ -478,7 +473,7 @@ definitions:
       A change to one or more trees status, suitable for reverting the change.
       Some of the information here is redundant to TreeLog, but is present to
       help users determine which change to revert.  The previous state of the
-      tree is not exposed in this data type.
+      tree is not exposed in this data type. 
     required:
       - id
       - trees
