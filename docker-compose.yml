@@ -3,7 +3,7 @@ services:
   api:
     build: api
     ports:
-      - "8000:8000"
+      - "8002:8002"
     volumes:
       # This doesn't quite work because the app has to be installed
       # Maybe we should drop the volume mount and rely on rebuilding?
@@ -15,9 +15,9 @@ services:
       - APP_SETTINGS=/app/settings.py
       - ENV=localdev
       - DATABASE_URL=postgres://treestatususer:treestatuspassword@db/treestatusdb
-      - TASKCLUSTER_SECRET=$TASKCLUSTER_SECRET
-      - TASKCLUSTER_CLIENT_ID=$TASKCLUSTER_CLIENT_ID
-      - TASKCLUSTER_ACCESS_TOKEN=$TASKCLUSTER_ACCESS_TOKEN
+      - SECRET_KEY=bm90YXNlY3JldA== # notasecret
+      - PULSE_TREESTATUS_ENABLE=0
+      - STATUSPAGE_ENABLE=0
     depends_on:
       - db
 
@@ -25,8 +25,6 @@ services:
     image: postgres:11
     volumes:
       - dbstore:/var/lib/postgresql/data
-    ports:
-      - "8102:5432"
     environment:
       - POSTGRES_USER=treestatususer
       - POSTGRES_PASSWORD=treestatuspassword

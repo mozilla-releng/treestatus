@@ -10,7 +10,7 @@ nix-build -o $FROM
 
 rm -f $TO/*
 cp $FROM/* $TO/ -R
-sudo chown rok:users $TO -R
+sudo chown $(id -un): $TO -R
 chmod +rw $TO -R
 
 

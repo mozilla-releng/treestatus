@@ -22,12 +22,13 @@ def create_app(config=None):
         static_url_path="/static",
     )
 
-    app.notify = taskcluster.Notify(
-        options=dict(
-            rootUrl=app.config["TASKCLUSTER_ROOT_URL"],
-            credentials=dict(clientId=app.config["TASKCLUSTER_CLIENT_ID"], accessToken=app.config["TASKCLUSTER_ACCESS_TOKEN"]),
+    if app.config["STATUSPAGE_ENABLE"]:
+        app.notify = taskcluster.Notify(
+            options=dict(
+                rootUrl=app.config["TASKCLUSTER_ROOT_URL"],
+                credentials=dict(clientId=app.config["TASKCLUSTER_CLIENT_ID"], accessToken=app.config["TASKCLUSTER_ACCESS_TOKEN"]),
+            )
         )
-    )
 
     app.add_url_rule("/static/<path:filename>", "static_handler", treestatus_api.view.static_handler)
 
