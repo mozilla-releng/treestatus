@@ -138,7 +138,7 @@ class Auth(object):
             try:
                 return flask_login.current_user.is_authenticated
             except Exception as e:
-                logger.error(f"Invalid authentication: {e}")
+                logger.warn(f"Invalid authentication: {e}")
                 return False
 
     def require_login(self, method):
@@ -162,7 +162,7 @@ class Auth(object):
                 user = flask_login.current_user.get_id()
                 user_permissions = flask_login.current_user.get_permissions()
                 diff = " OR ".join([", ".join(set(p).difference(user_permissions)) for p in permissions])
-                logger.error(f"User {user} misses some permissions: {diff}")
+                logger.warn(f"User {user} misses some permissions: {diff}")
                 return False
 
         return True
@@ -254,8 +254,8 @@ def parse_header_taskcluster(request):
         if not resp.get("status") == "auth-success":
             raise Exception("Taskcluster rejected the authentication")
     except Exception as e:
-        logger.error(f"TC auth error: {e}")
-        logger.error(f"TC auth details: {payload}")
+        logger.warn(f"TC auth error: {e}")
+        logger.warn(f"TC auth details: {payload}")
         return NO_AUTH
 
     return TaskclusterUser(resp)
