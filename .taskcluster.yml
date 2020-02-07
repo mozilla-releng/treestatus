@@ -14,7 +14,7 @@ tasks:
         api_setup: 'apt-get update && apt-get install -y postgresql &&'
       in:
         # [ <PROJECT NAME>,   <PYTHON VERSION>, <SETUP COMMAND>,     <DOCKERHUB REPO>]
-        - ['treestatus_api',    '37',             '${api_setup}',      'mozilla/releng-treestatus']
+        - ['treestatus_api',    '38',             '${api_setup}',      'mozilla/releng-treestatus']
     # -------------------------------------------------------------------------
 
     HEAD_REV:
@@ -82,7 +82,7 @@ tasks:
                 else: 'unknown'
         in:
           $match:
-            # Run code linting and unit tests for each project 
+            # Run code linting and unit tests for each project
             'run_tests == "1"':
               taskId: '${as_slugid(project_name + python_version)}'
               provisionerId: 'releng-t'
