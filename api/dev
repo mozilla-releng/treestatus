@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p python37Packages.setuptools python37Packages.virtualenv postgresql zip pkgconfig libffi openssl xz gccStdenv entr ag
+#! nix-shell -i bash -p python38Packages.setuptools python38Packages.virtualenv postgresql zip pkgconfig libffi openssl xz gccStdenv entr ag
 
 set -e
 
@@ -17,7 +17,7 @@ export TASKCLUSTER_ROOT_URL=${TASKCLUSTER_ROOT_URL:="https://firefox-ci-tc.servi
 
 # -- LOCAL SCRIPT SETTINGS ----------------------------------------------------
 PYENV_DIR=./env
-PYTHON_VERSION=3.7
+PYTHON_VERSION=3.8
 
 
 # -----------------------------------------------------------------------------
