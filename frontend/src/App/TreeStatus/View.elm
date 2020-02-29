@@ -400,6 +400,10 @@ categorizeTrees trees =
                         , "comm-esr60-seamonkey"
                         , "comm-esr52-thunderbird"
                         , "comm-esr52-seamonkey"
+                        , "comm-central"
+                        , "comm-beta"
+                        , "comm-release"
+                        , "comm-esr68"
                         ]
                 )
                 tryTreesOther
