@@ -72,7 +72,7 @@ secrets = {
         ("SECURITY_CSP_REPORT_URI", default(None)),
         # treestatus_api specific secrets, for more details look at src/treestatus_api/api.py
         ("PULSE_TREESTATUS_ENABLE", as_bool(default(False))),
-        ("STATUSPAGE_ENABLE", as_bool(default(True))),
+        ("STATUSPAGE_ENABLE", as_bool(default(False))),
         # Cache, for more details look at src/treestatus_api/lib/cache.py
         ("CACHE_TYPE", default("simple")),
         ("REDIS_URL", default(None)),

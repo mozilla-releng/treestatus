@@ -17,7 +17,6 @@ services:
       - DATABASE_URL=postgres://treestatususer:treestatuspassword@db/treestatusdb
       - SECRET_KEY=bm90YXNlY3JldA== # notasecret
       - PULSE_TREESTATUS_ENABLE=0
-      - STATUSPAGE_ENABLE=0
     depends_on:
       - db
 
