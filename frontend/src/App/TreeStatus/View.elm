@@ -368,6 +368,7 @@ categorizeTrees trees =
                     List.member tree.name
                         [ "mozilla-beta"
                         , "mozilla-release"
+                        , "mozilla-esr78"
                         , "mozilla-esr68"
                         , "mozilla-esr60"
                         , "mozilla-esr52"
@@ -403,6 +404,7 @@ categorizeTrees trees =
                         , "comm-central"
                         , "comm-beta"
                         , "comm-release"
+                        , "comm-esr78"
                         , "comm-esr68"
                         ]
                 )
