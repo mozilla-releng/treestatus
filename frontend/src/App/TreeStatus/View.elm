@@ -356,7 +356,6 @@ categorizeTrees trees =
                 (\tree ->
                     List.member tree.name
                         [ "autoland"
-                        , "mozilla-inbound"
                         , "mozilla-central"
                         ]
                 )
@@ -368,9 +367,8 @@ categorizeTrees trees =
                     List.member tree.name
                         [ "mozilla-beta"
                         , "mozilla-release"
+                        , "mozilla-esr78"
                         , "mozilla-esr68"
-                        , "mozilla-esr60"
-                        , "mozilla-esr52"
                         ]
                 )
                 developmentTreesOther
@@ -389,20 +387,10 @@ categorizeTrees trees =
             List.partition
                 (\tree ->
                     List.member tree.name
-                        [ "comm-central-thunderbird"
-                        , "comm-central-seamonkey"
-                        , "comm-beta-thunderbird"
-                        , "comm-beta-seamonkey"
-                        , "comm-release-thunderbird"
-                        , "comm-release-seamonkey"
-                        , "comm-esr68-thunderbird"
-                        , "comm-esr60-thunderbird"
-                        , "comm-esr60-seamonkey"
-                        , "comm-esr52-thunderbird"
-                        , "comm-esr52-seamonkey"
-                        , "comm-central"
+                        [ "comm-central"
                         , "comm-beta"
                         , "comm-release"
+                        , "comm-esr78"
                         , "comm-esr68"
                         ]
                 )
@@ -671,9 +659,6 @@ treeRulesLink treeName =
     case treeName of
         "autoland" ->
             "https://wiki.mozilla.org/Tree_Rules#autoland.2FLando"
-
-        "mozilla-inbound" ->
-            "https://wiki.mozilla.org/Tree_Rules#mozilla-inbound"
 
         "mozilla-central" ->
             "https://wiki.mozilla.org/Tree_Rules#mozilla-central_.28Nightly_channel.29"
