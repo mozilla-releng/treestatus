@@ -50,7 +50,7 @@ def _tree_asdict(tree):
 def _get_combined_tree(tree, tags=None, status=None, reason=None, log_id=None):
     """Combined view of the Tree.
 
-       This also shows status, reason and tags from last Tree Log.
+    This also shows status, reason and tags from last Tree Log.
     """
     result = copy.deepcopy(treestatus_api.config.DEFAULT_TREE)
     result.update(tree.to_dict())
@@ -121,7 +121,7 @@ def _statuspage_create_incident(headers, component_id, tree, status_from, status
     except Exception as e:
         log.exception(e)
         _statuspage_send_email_on_error(
-            subject=f"[treestatus] Error when creating statuspage incident", content=STATUSPAGE_ERROR_ON_CREATE.format(tree=tree.tree)
+            subject="[treestatus] Error when creating statuspage incident", content=STATUSPAGE_ERROR_ON_CREATE.format(tree=tree.tree)
         )
 
 
@@ -132,9 +132,7 @@ def _statuspage_resolve_incident(headers, component_id, tree, status_from, statu
         response.raise_for_status()
     except Exception as e:
         log.exception(e)
-        _statuspage_send_email_on_error(
-            subject=f"[treestatus] Error when closing statuspage incident", content=STATUSPAGE_ERROR_ON_CLOSE.format(tree=tree.tree)
-        )
+        _statuspage_send_email_on_error(subject="[treestatus] Error when closing statuspage incident", content=STATUSPAGE_ERROR_ON_CLOSE.format(tree=tree.tree))
         return
 
     # last incident with meta.treestatus.tree == tree.tree
@@ -163,7 +161,7 @@ def _statuspage_resolve_incident(headers, component_id, tree, status_from, statu
     except Exception as e:
         log.exception(e)
         _statuspage_send_email_on_error(
-            subject=f"[treestatus] Error when closing statuspage incident", content=STATUSPAGE_ERROR_ON_CLOSE.format(tree=tree.tree), incident_id=incident_id
+            subject="[treestatus] Error when closing statuspage incident", content=STATUSPAGE_ERROR_ON_CLOSE.format(tree=tree.tree), incident_id=incident_id
         )
 
 
@@ -228,7 +226,7 @@ def _notify_status_change(trees_changes):
 
 def _update_tree_status(session, tree, status=None, reason=None, tags=[], message_of_the_day=None):
     """Update the given tree's status; note that this does not commit
-       the session.  Supply a tree object or name.
+    the session.  Supply a tree object or name.
     """
     # DDD: we don't really have to do this
     if status is not None:
@@ -481,7 +479,7 @@ def _get_logs(tree, all=0):
     if not all:
         q = q.limit(TREE_SUMMARY_LOG_LIMIT)
 
-    logs = [l.to_dict() for l in q]
+    logs = [log.to_dict() for log in q]
     return dict(result=logs)
 
 

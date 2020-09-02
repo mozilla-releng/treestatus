@@ -82,37 +82,41 @@ secrets = {
 
 
 if secrets["PULSE_TREESTATUS_ENABLE"]:
-    secrets.update({
-        item: default(item)
-        for (item, default) in [
-            # Pulse, for more details look at src/treestatus_api/lib/pulse.py
-            ("PULSE_USER", required),
-            ("PULSE_PASSWORD", required),
-            ("PULSE_TREESTATUS_EXCHANGE", required),
-            ("PULSE_HOST", default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_HOST"])),
-            ("PULSE_PORT", as_int(default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_PORT"]))),
-            ("PULSE_VIRTUAL_HOST", default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_VIRTUAL_HOST"])),
-            ("PULSE_USE_SSL", as_bool(default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_USE_SSL"]))),
-            ("PULSE_CONNECTION_TIMEOUT", as_int(default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_CONNECTION_TIMEOUT"]))),
-        ]
-    })
+    secrets.update(
+        {
+            item: default(item)
+            for (item, default) in [
+                # Pulse, for more details look at src/treestatus_api/lib/pulse.py
+                ("PULSE_USER", required),
+                ("PULSE_PASSWORD", required),
+                ("PULSE_TREESTATUS_EXCHANGE", required),
+                ("PULSE_HOST", default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_HOST"])),
+                ("PULSE_PORT", as_int(default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_PORT"]))),
+                ("PULSE_VIRTUAL_HOST", default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_VIRTUAL_HOST"])),
+                ("PULSE_USE_SSL", as_bool(default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_USE_SSL"]))),
+                ("PULSE_CONNECTION_TIMEOUT", as_int(default(treestatus_api.lib.pulse.DEFAULT_CONFIG["PULSE_CONNECTION_TIMEOUT"]))),
+            ]
+        }
+    )
 
 if secrets["STATUSPAGE_ENABLE"]:
-    secrets.update({
-        item: default(item)
-        for (item, default) in [
-            ("STATUSPAGE_TOKEN", required),  # < -authentication token
-            ("STATUSPAGE_PAGE_ID", required),  # < -id of the page which we are interacting with
-            ("STATUSPAGE_COMPONENTS", as_dict(required)),  # < -a tree_name= > component_id mapping
-            ("STATUSPAGE_NOTIFY_ON_ERROR", required),  # < -email to where to send when error happens
-            ("STATUSPAGE_TAGS", as_list(required)),  # < -list of tags which will trigger creation of status page incident
-            # taskcluster client that is used to send notifications, for more details
-            # look at src/treestatus_api/__init__.py and check also at api/SCOPES.rst
-            # what are needed for this client
-            ("TASKCLUSTER_CLIENT_ID", required),
-            ("TASKCLUSTER_ACCESS_TOKEN", required),
-        ]
-    })
+    secrets.update(
+        {
+            item: default(item)
+            for (item, default) in [
+                ("STATUSPAGE_TOKEN", required),  # < -authentication token
+                ("STATUSPAGE_PAGE_ID", required),  # < -id of the page which we are interacting with
+                ("STATUSPAGE_COMPONENTS", as_dict(required)),  # < -a tree_name= > component_id mapping
+                ("STATUSPAGE_NOTIFY_ON_ERROR", required),  # < -email to where to send when error happens
+                ("STATUSPAGE_TAGS", as_list(required)),  # < -list of tags which will trigger creation of status page incident
+                # taskcluster client that is used to send notifications, for more details
+                # look at src/treestatus_api/__init__.py and check also at api/SCOPES.rst
+                # what are needed for this client
+                ("TASKCLUSTER_CLIENT_ID", required),
+                ("TASKCLUSTER_ACCESS_TOKEN", required),
+            ]
+        }
+    )
 
 locals().update(secrets)
 
