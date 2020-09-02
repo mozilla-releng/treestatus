@@ -15,8 +15,7 @@ import treestatus_api.lib.db
 
 
 def load_last_state(last_state):
-    """ ensure that structure of last_state is backwards compatible
-    """
+    """ensure that structure of last_state is backwards compatible"""
     last_state = json.loads(last_state)
 
     for field in ["status", "reason", "tags", "log_id", "current_status", "current_reason", "current_tags", "current_log_id"]:

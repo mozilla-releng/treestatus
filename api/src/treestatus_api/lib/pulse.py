@@ -17,10 +17,10 @@ DEFAULT_CONFIG = dict(PULSE_HOST="pulse.mozilla.org", PULSE_PORT=5671, PULSE_VIR
 
 
 class Pulse(object):
-    """ Documentation about Pulse
+    """Documentation about Pulse
 
-        https://wiki.mozilla.org/Auto-tools/Projects/Pulse
-        https://wiki.mozilla.org/Auto-tools/Projects/Pulse/Exchanges
+    https://wiki.mozilla.org/Auto-tools/Projects/Pulse
+    https://wiki.mozilla.org/Auto-tools/Projects/Pulse/Exchanges
     """
 
     def __init__(self, host, port, user, password, virtual_host="/", ssl=True, connect_timeout=5):

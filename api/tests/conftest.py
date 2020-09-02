@@ -15,8 +15,7 @@ def get_app_config(extra_config):
 
 
 def configure_app(app):
-    """Configure flask application and ensure all mocks are in place
-    """
+    """Configure flask application and ensure all mocks are in place"""
 
     if hasattr(app, "db"):
         app.db.drop_all()
@@ -25,8 +24,7 @@ def configure_app(app):
 
 @pytest.fixture(scope="session")
 def app():
-    """Load treestatus_api in test mode
-    """
+    """Load treestatus_api in test mode"""
     import treestatus_api
 
     config = get_app_config(

@@ -6,8 +6,7 @@
 import pathlib
 
 from connexion.apis.flask_api import FlaskApi
-from connexion.apps.flask_app import FlaskApp
-from connexion.apps.flask_app import FlaskJSONEncoder
+from connexion.apps.flask_app import FlaskApp, FlaskJSONEncoder
 from connexion.exceptions import ProblemException
 from werkzeug.exceptions import default_exceptions
 
@@ -18,7 +17,7 @@ logger = treestatus_api.lib.log.get_logger(__name__)
 
 class Api:
     """TODO: add description
-       TODO: annotate class
+    TODO: annotate class
     """
 
     def __init__(self, app):
@@ -55,8 +54,7 @@ class Api:
         pass_context_arg_name=None,
         options=dict(swagger_url="apidocs"),
     ):
-        """Adds an API to the application based on a swagger file
-        """
+        """Adds an API to the application based on a swagger file"""
 
         app = self.__app
 
