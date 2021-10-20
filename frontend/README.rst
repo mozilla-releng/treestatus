@@ -9,3 +9,4 @@ The following pushes will be deployed:
 
 * `staging` branch: https://stage.treestatus.mozilla-releng.net
 * `production` branch: https://treestatus.mozilla-releng.net
+* 
