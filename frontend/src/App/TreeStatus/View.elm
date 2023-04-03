@@ -368,7 +368,6 @@ categorizeTrees trees =
                         [ "mozilla-beta"
                         , "mozilla-release"
                         , "mozilla-esr102"
-                        , "mozilla-esr91"
                         ]
                 )
                 developmentTreesOther
@@ -391,7 +390,6 @@ categorizeTrees trees =
                         , "comm-beta"
                         , "comm-release"
                         , "comm-esr102"
-                        , "comm-esr91"
                         ]
                 )
                 tryTreesOther
