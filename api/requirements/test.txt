@@ -5,56 +5,175 @@
 #
 #    pip-compile-multi
 #
--r base.txt
+aioamqp==0.14.0
+    # via -r base.in
+aiohttp==3.7.4.post0
+    # via taskcluster
+alembic==1.7.4
+    # via flask-migrate
+amqp==5.0.6
+    # via kombu
+async-timeout==3.0.1
+    # via
+    #   aiohttp
+    #   taskcluster
+attrs==21.2.0
+    # via
+    #   aiohttp
+    #   flake8-mypy
+    #   jsonschema
+    #   pytest
 black==21.9b0
-    # via -r requirements/test.in
+    # via -r test.in
+blinker==1.4
+    # via -r base.in
+boto3==1.19.4
+    # via mozdef-client
+botocore==1.22.4
+    # via
+    #   boto3
+    #   s3transfer
 build==0.7.0
     # via check-manifest
+certifi==2021.10.8
+    # via requests
+chardet==4.0.0
+    # via aiohttp
+charset-normalizer==2.0.7
+    # via requests
 check-manifest==0.47
-    # via -r requirements/test.in
+    # via -r test.in
+click==7.1.2
+    # via
+    #   black
+    #   clickclick
+    #   flask
+    #   pip-compile-multi
+    #   pip-tools
+clickclick==20.10.2
+    # via connexion
 codecov==2.1.12
-    # via -r requirements/test.in
+    # via -r test.in
+connexion[swagger-ui]==2.9.0
+    # via -r base.in
 coverage[toml]==5.5
     # via
     #   codecov
     #   coveralls
     #   pytest-cov
 coveralls==3.2.0
-    # via -r requirements/test.in
+    # via -r test.in
 docopt==0.6.2
     # via coveralls
+ecdsa==0.17.0
+    # via python-jose
 fancycompleter==0.9.1
     # via pdbpp
 flake8==4.0.1
     # via
-    #   -r requirements/test.in
+    #   -r test.in
     #   flake8-coding
     #   flake8-debugger
     #   flake8-isort
     #   flake8-mypy
     #   flake8-quotes
 flake8-coding==1.3.2
-    # via -r requirements/test.in
+    # via -r test.in
 flake8-copyright==0.2.2
-    # via -r requirements/test.in
+    # via -r test.in
 flake8-debugger==4.0.0
-    # via -r requirements/test.in
+    # via -r test.in
 flake8-isort==4.1.1
-    # via -r requirements/test.in
+    # via -r test.in
 flake8-mypy==17.8.0
-    # via -r requirements/test.in
+    # via -r test.in
 flake8-quotes==3.3.1
-    # via -r requirements/test.in
+    # via -r test.in
+flask==1.1.4
+    # via
+    #   -r base.in
+    #   connexion
+    #   flask-caching
+    #   flask-cors
+    #   flask-login
+    #   flask-migrate
+    #   flask-oidc
+    #   flask-sqlalchemy
+flask-caching==1.10.1
+    # via -r base.in
+flask-cors==3.0.10
+    # via -r base.in
+flask-login==0.5.0
+    # via -r base.in
+flask-migrate==3.1.0
+    # via -r base.in
+flask-oidc==1.4.0
+    # via -r base.in
+flask-sqlalchemy==2.5.1
+    # via
+    #   -r base.in
+    #   flask-migrate
+flask-talisman==0.8.1
+    # via -r base.in
+greenlet==1.1.2
+    # via sqlalchemy
+gunicorn==20.1.0
+    # via -r base.in
+httplib2==0.20.1
+    # via oauth2client
+idna==3.3
+    # via
+    #   requests
+    #   yarl
+inflection==0.5.1
+    # via connexion
 iniconfig==1.1.1
     # via pytest
 inotify==0.2.10
-    # via -r requirements/test.in
+    # via -r test.in
+isodate==0.6.0
+    # via openapi-schema-validator
 isort==5.9.3
     # via
-    #   -r requirements/test.in
+    #   -r test.in
     #   flake8-isort
+itsdangerous==1.1.0
+    # via
+    #   flask
+    #   flask-oidc
+jinja2==2.11.3
+    # via
+    #   flask
+    #   swagger-ui-bundle
+jmespath==0.10.0
+    # via
+    #   boto3
+    #   botocore
+jsonschema==3.2.0
+    # via
+    #   connexion
+    #   openapi-schema-validator
+    #   openapi-spec-validator
+kombu==5.1.0
+    # via -r base.in
+logbook==1.5.3
+    # via -r base.in
+mako==1.1.5
+    # via alembic
+markupsafe==2.0.1
+    # via
+    #   jinja2
+    #   mako
 mccabe==0.6.1
     # via flake8
+mohawk==1.1.0
+    # via taskcluster
+mozdef-client==1.1
+    # via -r base.in
+multidict==5.2.0
+    # via
+    #   aiohttp
+    #   yarl
 mypy==0.910
     # via flake8-mypy
 mypy-extensions==0.4.3
@@ -63,28 +182,46 @@ mypy-extensions==0.4.3
     #   mypy
 nose==1.3.7
     # via inotify
+oauth2client==4.1.3
+    # via flask-oidc
+openapi-schema-validator==0.1.5
+    # via openapi-spec-validator
+openapi-spec-validator==0.3.1
+    # via connexion
 packaging==21.0
     # via
     #   build
     #   pytest
+pamqp==2.3.0
+    # via aioamqp
 pathspec==0.9.0
     # via black
 pdbpp==0.10.3
-    # via -r requirements/test.in
+    # via -r test.in
 pep517==0.12.0
     # via
     #   build
     #   pip-tools
 pip-compile-multi==2.4.2
-    # via -r requirements/test.in
+    # via -r test.in
 pip-tools==6.4.0
     # via pip-compile-multi
 platformdirs==2.4.0
     # via black
 pluggy==1.0.0
     # via pytest
+psycopg2==2.9.1
+    # via -r base.in
 py==1.10.0
     # via pytest
+pyasn1==0.4.8
+    # via
+    #   oauth2client
+    #   pyasn1-modules
+    #   python-jose
+    #   rsa
+pyasn1-modules==0.2.8
+    # via oauth2client
 pycodestyle==2.8.0
     # via
     #   flake8
@@ -93,18 +230,92 @@ pyflakes==2.4.0
     # via flake8
 pygments==2.10.0
     # via pdbpp
+pyparsing==2.4.7
+    # via
+    #   httplib2
+    #   packaging
 pyrepl==0.9.0
     # via fancycompleter
+pyrsistent==0.18.0
+    # via jsonschema
 pytest==6.2.5
     # via
-    #   -r requirements/test.in
+    #   -r test.in
     #   pytest-cov
 pytest-cov==3.0.0
-    # via -r requirements/test.in
+    # via -r test.in
+python-dateutil==2.6.1
+    # via
+    #   -r base.in
+    #   botocore
+python-jose==3.3.0
+    # via -r base.in
+pytz==2021.3
+    # via
+    #   -r base.in
+    #   mozdef-client
+pyyaml==5.4.1
+    # via
+    #   clickclick
+    #   connexion
+    #   openapi-spec-validator
+raven==6.10.0
+    # via -r base.in
+redis==3.5.3
+    # via -r base.in
 regex==2021.10.23
     # via black
+requests==2.26.0
+    # via
+    #   -r base.in
+    #   codecov
+    #   connexion
+    #   coveralls
+    #   requests-futures
+    #   responses
+    #   taskcluster
+requests-futures==1.0.0
+    # via mozdef-client
 responses==0.14.0
-    # via -r requirements/test.in
+    # via -r test.in
+rsa==4.7.2
+    # via
+    #   oauth2client
+    #   python-jose
+s3transfer==0.5.0
+    # via boto3
+six==1.16.0
+    # via
+    #   ecdsa
+    #   flake8-debugger
+    #   flask-cors
+    #   flask-oidc
+    #   flask-talisman
+    #   jsonschema
+    #   mohawk
+    #   oauth2client
+    #   openapi-schema-validator
+    #   openapi-spec-validator
+    #   python-dateutil
+    #   responses
+    #   taskcluster
+slugid==2.0.0
+    # via taskcluster
+sqlalchemy==1.4.26
+    # via
+    #   -r base.in
+    #   alembic
+    #   flask-sqlalchemy
+structlog==21.2.0
+    # via -r base.in
+swagger-ui-bundle==0.0.9
+    # via
+    #   -r base.in
+    #   connexion
+taskcluster==44.2.2
+    # via -r base.in
+taskcluster-urls==13.0.1
+    # via taskcluster
 testfixtures==6.18.3
     # via flake8-isort
 toml==0.10.2
@@ -120,10 +331,31 @@ tomli==1.2.2
     #   pep517
 toposort==1.7
     # via pip-compile-multi
-wheel==0.37.0
+typing-extensions==3.10.0.2
+    # via
+    #   aiohttp
+    #   black
+    #   mypy
+urllib3==1.26.7
+    # via
+    #   botocore
+    #   requests
+    #   responses
+vine==5.0.0
+    # via
+    #   amqp
+    #   kombu
+werkzeug==1.0.1
+    # via
+    #   -r base.in
+    #   connexion
+    #   flask
+wheel==0.38.1
     # via pip-tools
 wmctrl==0.4
     # via pdbpp
+yarl==1.7.0
+    # via aiohttp
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
