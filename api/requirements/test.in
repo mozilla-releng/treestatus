@@ -1,8 +1,8 @@
 -r base.in
 
-black
+# Higher black versions depend on click>=8 and it conflicts with flask depending on click<8.0
+black==21.12b0
 check-manifest
-codecov
 coveralls
 flake8
 flake8-coding
